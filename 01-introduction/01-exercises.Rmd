@@ -22,12 +22,17 @@ Write a function (f) that takes a vector of numbers, **x**, and returns a vector
 ### Solution 
 
 ```{r}
-f <- function(x) {
-  
-  # ...
-  
+f<- function(x) {
+  prod(ifelse(x != 0, x, 1))/(ifelse(x != 0, x, 1))
 }
 
+# Test 1: Sample data.
+x <- c(1, 5, 2, 8)
+f(x)
+
+# Test 2: Vector includig 0. If the value is 0, it does not divide by itself. 
+y <- c(0, 1, 5, 2, 8)
+f(y)
 ```
     
 
@@ -50,7 +55,13 @@ Write a function f(x) to accept an integer vector, and returns a vector with tho
 
 ```{r}
 f <- function(x) {
-  # ...
-  
+ ifelse(x %% 15 == 0, "FizzBuzz",
+          ifelse(x %% 3 == 0, "Fizz", 
+                 ifelse(x %% 5 == 0,  "Buzz", x)
+                 )
+       )
 }
+
+x <- 1:20
+f(x)
 ```

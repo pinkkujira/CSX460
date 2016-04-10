@@ -2,6 +2,8 @@
 .Rhistory
 .Rproj.user
 *.swp
+*.DS_Store
+
 
 # These are to protect sensitive content
 admin
