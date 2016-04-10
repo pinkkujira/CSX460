@@ -129,9 +129,11 @@ $(document).ready(function () {
 <h3>Solution</h3>
 <pre class="r"><code>f&lt;- function(x) {
   prod(ifelse(x != 0, x, 1))/(ifelse(x != 0, x, 1))
-}
-
-# Test 1: Sample data.
+}</code></pre>
+</div>
+<div id="tests" class="section level3">
+<h3>Tests</h3>
+<pre class="r"><code># Test 1: Sample data.
 x &lt;- c(1, 5, 2, 8)
 f(x)</code></pre>
 <pre><code>## [1] 80 16 40 10</code></pre>
@@ -158,9 +160,11 @@ f(y)</code></pre>
                  ifelse(x %% 5 == 0,  &quot;Buzz&quot;, x)
                  )
        )
-}
-
-# Test 1: Sample data.
+}</code></pre>
+</div>
+<div id="tests-1" class="section level3">
+<h3>Tests</h3>
+<pre class="r"><code># Test 1: Sample data
 x &lt;- 1:20
 f(x)</code></pre>
 <pre><code>##  [1] &quot;1&quot;        &quot;2&quot;        &quot;Fizz&quot;     &quot;4&quot;        &quot;Buzz&quot;     &quot;Fizz&quot;    
