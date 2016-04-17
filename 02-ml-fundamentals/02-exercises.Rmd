@@ -43,8 +43,7 @@ dat <- bind_rows(cars2010, cars2011, cars2012)
 - What is a good "naive guess" of FE? Show your work
 
 ```{r}
-naive_guess <- median(dat$FE)
-naive_guess
+naive_guess <- mean(dat$FE)
 ```
 
 
@@ -53,7 +52,6 @@ naive_guess
 ```{r}
 # ... ggplot2 
 ggplot(data=dat, aes(x=EngDispl, y=FE)) + geom_point()  + geom_hline(yintercept = naive_guess)
-
 ```
 
 - Sample 10 observations from `dat`
@@ -83,7 +81,6 @@ All functions should accept two arguments:
 
 
 ```{r}
-
 rmse <- function(y, yhat) {
   (y- yhat) ^2 %>% mean %>% sqrt
 }
@@ -95,7 +92,6 @@ mae <- function(y, yhat) {
 medae <- function(y, yhat) { 
   abs(y - yhat) %>% median
 }
-
 ```
 
 Use these functions to evaluate the loss/performance of:
@@ -106,7 +102,6 @@ rmse(dat$FE, naive_guess)
 mae(dat$FE, naive_guess)
 medae(dat$FE, naive_guess)
 ```
-
 
 ## Exercise 3: Linear Model and Model Performance 
 
@@ -123,7 +118,6 @@ fit.2010 <- lm(FE ~ EngDispl, data=cars2010)
 -- predict the FE for 2012. What is the RMSE errors associated with the predictions.
 
 ```{r}
-
 y.2010 <- predict(fit.2010, newdata = cars2010)
 y.2011 <- predict(fit.2010, newdata = cars2011) 
 y.2012 <- predict(fit.2010, newdata = cars2012)
@@ -131,7 +125,6 @@ y.2012 <- predict(fit.2010, newdata = cars2012)
 rmse.2010 <- rmse(cars2010$FE, y.2010)
 rmse.2011 <- rmse(cars2011$FE, y.2011)
 rmse.2012 <- rmse(cars2012$FE, y.2012) 
-
 ```
 
 
