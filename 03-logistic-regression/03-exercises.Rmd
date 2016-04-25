@@ -147,6 +147,48 @@ summary(fit.glm.both.directions)
 
 - Implement Kuhn's iterative feature removal function described in **APM** Section 3.5, page 47
 
+```{r}
+
+
+feature_removal <- function(cor_matrix, threshold) {
+ # find predictors that are highly correlated
+ diag(cor_matrix) <- 0 # self correlations (1.0) won't be considered
+ max_matrix <- which(cor_matrix == max(abs(cor_matrix)), arr.ind = TRUE)
+ cols_corr_predictors <- max_matrix[,1] # columns of the strongly correlated predictors
+ predictor1_col <- cols_corr_predictors[1]
+ predictor2_col <- cols_corr_predictors[2]
+ high_corr <- cor_matrix[predictor1_col, predictor2_col]
+ 
+ # checks for stop condition
+ if (high_corr > threshold) {
+   # average correlation to the other predictors
+   predictor1_mean <- mean(cor_matrix[predictor1_col])
+   predictor2_mean <- mean(cor_matrix[predictor2_col])
+   
+   # determine the predictor with the higher correlation with the other predictors
+   highest_corr_predictor <- predictor1_col
+   if (predictor2_mean > predictor1_mean) {
+     highest_corr_predictor <- predictor2_col
+   }
+  
+   # recursive call until the stop condition meets
+   col_row_remove <- -1 * highest_corr_predictor
+   cor_matrix_new <- cor_matrix[col_row_remove, col_row_remove]
+   feature_removal(cor_matrix_new, threshold)
+ }
+}
+
+find_features <- function(x, threshold) {
+  # calculate correlations
+  cor_matrix <- cor(x)
+  
+  feature_removal(cor_matrix, threshold)
+}
+```
+
+- Usage of above function:
+find_features(iris[-5], threshold=0.9) 
+- The function is not completely working yet..
 
 
 ## Synthetic Data (Optional)
