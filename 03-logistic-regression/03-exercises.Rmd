@@ -1,6 +1,6 @@
 ---
 title: "03-exercises"
-author: "Your Name Here"
+author: "Ai Sasho"
 date: "April 20, 2016"
 output: html_document
 ---
@@ -58,22 +58,33 @@ Using Fuel Economy data set from the **AppliedPredictiveModeling** Package.
 
 ```{r}
 
-form <- ~ EngDispl + NumCyl + Transmission + AirAspirationMethod + NumGears + TransLockup + TransCreeperGear + DriveDesc + IntakeValvePerCyl + ExhaustValvesPerCyl + CarlineClassDesc + VarValveTiming + VarValveLift
-
  # Your work here
  fit.min <- lm( FE ~ 1, fe )
+ fit.min.forward <- stepAIC( fit.min, scope = ~ 1, direction = "forward")
+ 
+ fit.full <- lm (FE ~ ., fe)
+ fit.full.backward <- stepAIC( fit.full, scope = ~ 1, direction = "backward")
 
- 
- stepAIC( fit.min.forward, scope = ~ 1, direction = "backward")
- 
- 
- fit.full <- lm( FE ~ ., fe )
- stepAIC( fit.full, score = ~ 1, direction = "backward")
 ```
 
 - Are they the same model? If not why?  Which is better? JUstify your answer.
+They are different models, because fit.min only has one predicotr, whereas fit.full has all. 
 
+```{r}
+rmse <- function(y, yhat) {
+  (y- yhat) ^2 %>% mean %>% sqrt
+}
 
+y.hat.fit.min.forward <- predict(fit.min.forward, fe)
+rmse(fe$FE, y.hat.fit.min.forward)
+
+y.hat.fit.full.backward <- predict(fit.full.backward, fe)
+rmse(fe$FE, y.hat.fit.full.backward)
+```
+
+fit.full.backward is a better model, as when predicting the FE data, the RMSE is 3.437353, whereas, the RMSE for fit.min.forward is 8.096176. 
+
+Is it a good assesment of the model? I used the training data to predict, and used the training data as y values and predicted as y-hat for RMSE. Probably I should be using a completely differnt set of data to asses the models?
 
 ## Logsitic and Inverse Logistic Transformation 
 
@@ -92,16 +103,16 @@ form <- ~ EngDispl + NumCyl + Transmission + AirAspirationMethod + NumGears + Tr
 ```{r}
 
 logistic <- function(x) { 
-  ... # Your work here  
+  1/(1 + exp(-x))
 }
 
-qplot( ... )
+qplot(x=c(-10:10), y =logistic(c(-10:10)), xlab="", ylab="logistic")
 
 logistic_inv <- function(y) { 
-  ... # Your work  
+  uniroot(logistic, c(-10,10), extendInt="yes")
 }
 
-qplot(...) 
+#qplot(x=c(0, 1), y =logistic_inv(c(0.1, 1)), xlab="", ylab="inverse of logistic")
 
 ```
 
@@ -121,8 +132,13 @@ c(0,0.5,1) %>% logistic_inv
 Using the GermanCredit data from the **Caret** package/ UCI Machine Learning Library, create a model for `Class` ("Good" vs. "Bad" ). Show your model performance.  
 
 ```{r}
+library(caret)
+data(GermanCredit)
+fit.glm <- glm(Class ~  ., data=GermanCredit, family="binomial")
+fit.glm.both.directions <- stepAIC(fit.glm, data=GermanCredit, direction = "both")
 
-fit.min.forward
+summary(fit.glm.both.directions)
+
 ```
 
 
