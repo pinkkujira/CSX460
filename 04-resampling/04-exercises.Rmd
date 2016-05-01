@@ -1,6 +1,6 @@
 ---
 title: "Sensitivity and Specificity"
-author: "Your Name Here"
+author: "Ai Sasho"
 date: "October 5, 2015"
 output: html_document
 ---
@@ -41,7 +41,6 @@ for( nm in packs ) {
 ```{r}
 set.seed(1) 
 x <- runif(20,1,20)
-
 x_mean = mean(x)
 
 k=10
@@ -49,7 +48,16 @@ k=10
 # CROSS-VALIDATION
 # ... YOUR WORK HWEW
 
-sd_cv <- .. # YOUR ANSWER HERE
+# split into 10 blocks hold out 1 block: take std of mean  
+
+means_list <- c()
+for (i in 1:k) {
+  holdout_start_idx <- i + (i -1)
+  holdout_end_idx <- holdout_start_idx + 1
+  test <- x[c(-holdout_start_idx, -holdout_end_idx)]
+  means_list <- c(means_list, mean(test))
+}
+sd_cv <- sd(means_list)
 
 
 # BOOTSTRAP (EXAMPLE)
@@ -78,7 +86,7 @@ iris$Versicolor <-
   ifelse( iris$Species == 'versicolor', "versicolor", "other" ) %>% as.factor
 iris$Species = NULL 
 
-wh <- sample.int( nrow(iris), size=nrow(iris)/2 )
+wh <- sample.int( nrow(iris), size=nrow(iris)/2 ) #samples 1/2 num rows of iris
 train <- iris[ wh,]
 test <- iris[ -wh, ]
 
@@ -123,17 +131,70 @@ threshold = 0.5
 y = test$Versicolor == 'versicolor'
 yhat = predict(fit.glm, test, type="response") > threshold
 
+total_population <- sum(y) + sum(!y)
+
+prevalence <- function(y, yhat) {
+  # condition postives (= obsved positives) / total population
+  sum(y) / total_population  
+}
+prevalence(y, yhat)
+
+accuracy <- function(y, yhat) {
+  (sum(yhat & y) + sum(!yhat & !y)) / total_population
+}
+accuracy(y, yhat)
+
+error_rate <- function(y, yhat) {
+  (sum(!yhat & y) + sum(yhat & !y)) / total_population
+}
+error_rate(y, yhat)
+
+tpr <- function(y, yhat) {
+  sum(yhat & y) / sum(y)
+}
+tpr(y, yhat)
 
 fpr = function(y,yhat)
-  sum(y & (y != yhat) ) / # FP
+  sum(yhat & !y ) / # FP
   sum(! y)                # N
 
 fpr(y,yhat)
 
+tnr <- function(y, yhat) {
+  sum(!yhat &  !y) / sum(!y)
+}
+tnr(y, yhat)
+
+sensitivity <- function(y, yhat) {
+  # TPR = num true positives / (num true positives + num false negatives)
+  sum(yhat & y) / (sum(yhat & y) + sum(!yhat & y))
+}
+sensitivity(y, yhat)
+
+specificity <- function(y, yhat) {
+  # num true negatives / (num true negatives + num false positives)
+  sum(!yhat & !y) / (sum(!yhat & !y) + sum(yhat & !y))
+}
+specificity(y, yhat)
+
+recall <- function(y, yhat) {
+  # same as sensitivity and TPR
+  sum(yhat & y) / (sum(yhat & y) + sum(!yhat & y))
+}
+recall(y, yhat)
+
+precision <- function(y, yhat) {
+  # true positives / predicted positives
+  sum(y) / sum(yhat)
+}
+precision(y, yhat)
+
+
 ```
 
 - What is wrong with the modeling approach used?
-
+- Answer: The true positive rate is low: 0.545, which means that the model could misidentify the true versicolr species as ther other species 
+- Also, the error rate of 0.267 seems little high?
 
 
 

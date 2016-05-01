@@ -109,7 +109,7 @@ logistic <- function(x) {
 qplot(x=c(-10:10), y =logistic(c(-10:10)), xlab="", ylab="logistic")
 
 logistic_inv <- function(y) { 
-  uniroot(logistic, c(-10,10), extendInt="yes")
+  uniroot(logistic, c(0.1,100), extendInt="yes")
 }
 
 #qplot(x=c(0, 1), y =logistic_inv(c(0.1, 1)), xlab="", ylab="inverse of logistic")
