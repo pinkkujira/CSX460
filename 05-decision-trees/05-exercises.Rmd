@@ -38,8 +38,8 @@ Revisit the GermanCredit data. Use `caret` to build models of `Class` using the 
 Save the caret objects with the names provided.
 
 ```{r}
-
-# Your work here. 
+library(caret)
+data(GermanCredit)
 
 control <-  trainControl( method="boot", number=5, classProb=TRUE, savePrediction=TRUE )
 
@@ -85,13 +85,17 @@ roc.fit.myown %>% plot( print.auc=TRUE, grid=TRUE)
 
 
 Q: Which models would you select based on these tools?
+
 Answer: I would select GLM amongst the models abole. The GLM model has a higher accuracy of 0.74 and the kappa value of 0.35, and the ROC curve shows that the higher sensitivity and the specificity than other models.
 
 Q: If you assume that a `Class=="bad""` is 10 more costly than `Class=="good"`, determine your threshold for the model of your choice.  Show your work.
 
+Answer: Analyzing the output from the model below, I would determine the threshold of cp = 0.005698006, as that cp value gives the highest accuracy of 0.6040423. I am not exactly sure why the overall acurracy decreased, when given a cost matrix in the CART model. (Please note that the highest cp and accuracy are different in each run, so the exact values may differ).
+
 ```{r}
 cost.matrix <- matrix(c(0, 1, 10, 0), ncol=2)
-fit.rpart.cost <- train(Class ~ ., data=GermanCredit, method="rpart", trControl=control, tuneLength=40, parms=list(los =cost.matrix) )
-
-
+fit.rpart.cost <- train(Class ~ ., data=GermanCredit, method="rpart", trControl=control, tuneLength=40, parms=list(loss=cost.matrix) )
+fit.rpart.cost 
 ```
+
+
