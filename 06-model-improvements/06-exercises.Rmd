@@ -1,7 +1,7 @@
 ---
 title: "05-exercises"
-author: "Your Name Here"
-date: "2016-05-xx"
+author: "Ai Sasho"
+date: "2016-05-14"
 output: html_document
 ---
 
@@ -38,35 +38,37 @@ This week we return to the Fuel Economy Data having learned much about model bui
 
 Start by making choosing a metric and making a naive guess of model performance: 
 
-Metric: _______________
-Naive Guess: _______________
-Expected Model Performance (based on Naive Guess): _______________
+Metric: RSME
+Naive Guess: 35.0382
+Expected Model Performance (based on Naive Guess): RSME < 8.096176
 
 Show your work below for the calculations
 
 ```{r} 
 
-  
-naive_guess = ..
+naive_guess = mean(FE$FE)
 
-err_naive_guess = ..
+library(Metrics)
+err_naive_guess = rmse(FE$FE, naive_guess)
 
 ```
 
 
-Based only your intuition, how low do your think you can get your metric: ___________
+Based only your intuition, how low do your think you can get your metric: 5.67 (30% improvement of naive guess)
 
 
 ## Examine your data
 
  * Plot your response/outcome 
 
- * Make a guess of a strong predictor: _________________  
+ * Make a guess of a strong predictor: NumCyl 
  * Plot your response vs your predictor. 
 
 ```{r}
 
-.. # Your work here
+# plot
+ggplot(data=FE, aes(x=NumCyl, y=FE)) + geom_point()  + geom_hline(yintercept = naive_guess)
+
 
 ```
 
@@ -77,15 +79,16 @@ Based only your intuition, how low do your think you can get your metric: ______
 Using **caret**, build a simple linear model and a simple tree model. 
 
 ```{r}
-
-fit.lm <- .. # Your model here
-fit.rp <- .. # Your model here
+library(caret)
+ctrl <- trainControl( method="boot", number=10, classProb=TRUE, savePrediction=TRUE )
+fit.lm <- train(FE ~ ., data=FE, method="lm", trControl=ctrl)
+fit.rp <- train(FE ~ ., data=FE, method="rpart", cp="0.01", trControl=ctrl)
 
 ```
 
 
 What did you learn about the data from these models.
-
+The RMSE for fit.lm was about 3.7 and the RMSE for fit.rp was about 4.6. RMSE became a lot lower, when using more predictors for this data set.
 
 
 ## Build More Advanced Models
@@ -96,16 +99,33 @@ Now refine your models. Use **caret** to build advanced models:
 
 ```{r}
 
-# Your work here.
-fit.bag   <- .. # bagging model 
+fit.bag  <- train(FE ~ ., data=FE, method="bagEarth", trControl=ctrl, B=10)
 
-fit.boost <- .. # boosting model
+fit.boost <- train(FE ~ ., data=FE, method="bstTree", trControl=ctrl)
 
 
 ```
 
+```{r}
+
+fit.lm
+fit.rp
+fit.bag
+fit.boost
+
+```
 
 ## Conclusion 
 
 Which model would you use and why?  Under different circumstances why would you choose one of the other models.
+
+The RMSEs for the models were:
+fit.lm -> 3.712
+fit.rp -> 4.567
+fit.bag -> 3.534
+fit.boost -> 3.076
+
+I would choose the fit.boost model, if the only metric used to evaluate the models is the RMSE value. 
+
+Under different circumstances, there are many factors involved in choosing a model. For instance, RMSE is one of the big factors, as it is the measurement of accuracy of the model. However, a model with a low RMSE tends to be complex.  If the interpretability of the model is the concern, a simple model may be chosen over a complex one for interpretability. Also, the speed of the model may matter. Depending on the number of data points and computational resources, a simple model may be chosen over the complex model in order to save the time and computational resources, even if this would result in compromising the model accuracy.
 
